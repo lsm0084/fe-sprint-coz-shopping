@@ -162,7 +162,7 @@ const DropdownMenu = styled.div`
   }
 `;
 
-function Bookmarkpage() {
+function Productpage() {
   const [products, setProducts] = useState([]);
   const [isBookmarked, setIsBookmarked] = useState(false);
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
@@ -306,7 +306,7 @@ function Bookmarkpage() {
     <div className="main-page">
     <Header>
       <Link to='/'>
-      <img className='hdcs' src='로고.png'/>
+      <img className='hdcs' src='로고.png'/> 
       </Link>
       <span className='hdt'>COZ Shopping</span>
       <div className="dropdown">
@@ -340,7 +340,7 @@ function Bookmarkpage() {
     <img
       src="상품.png"
       className={`t2 ${filterType === 'product' ? 'active' : ''}`}
-      onClick={() => handleFilter('product')}
+      onClick={() => handleFilter('Product')}
     />
     <div className={`f2 ${filterType === 'product' ? 'active' : ''}`}>상품</div>
   </div>
@@ -420,4 +420,4 @@ function Bookmarkpage() {
   );
 }
 
-export default Bookmarkpage;
+export default Productpage;

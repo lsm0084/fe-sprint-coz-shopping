@@ -42,7 +42,7 @@ const Main = styled.main`
   .product-list {
     display: grid;
     grid-template-columns: repeat(4, 1fr);
-    grid-template-rows: repeat(2, 1fr);
+    grid-template-rows: repeat(1, 1fr);
     gap: 20px;
   }
   .bookmark-message{
@@ -306,7 +306,7 @@ function Bookmarkpage() {
     <div className="main-page">
     <Header>
       <Link to='/'>
-      <img className='hdcs' src='로고.png'/>
+      <img className='hdcs' src='로고.png'/> 
       </Link>
       <span className='hdt'>COZ Shopping</span>
       <div className="dropdown">
@@ -340,7 +340,7 @@ function Bookmarkpage() {
     <img
       src="상품.png"
       className={`t2 ${filterType === 'product' ? 'active' : ''}`}
-      onClick={() => handleFilter('Product')}
+      onClick={() => handleFilter('product')}
     />
     <div className={`f2 ${filterType === 'product' ? 'active' : ''}`}>상품</div>
   </div>
@@ -373,7 +373,7 @@ function Bookmarkpage() {
         <div className="modal-overlay" onClick={closeModal}>
           <div className="modal-content" onClick={(e) => e.stopPropagation()}>
             <img src={selectedImage} className="modal-image" alt="Modal" />
-            <img src='북마크on.png' className='modalbookmark'/>
+            <img src='북마크off.png' className='modalbookmark'/>
           </div>
         </div>
       )}
@@ -396,7 +396,7 @@ function Bookmarkpage() {
             </div>
             <div className="info-right">
               <img
-                src={'북마크on.png'}
+                src={'북마크off.png'}
                 className="bookmark-icon"
                 onClick={() => toggleBookmark(product.id)}
               />
@@ -406,7 +406,7 @@ function Bookmarkpage() {
       ))}
       {showMessage && (
     <div className="bookmark-message">
-      <img src='북마크off.png' className='c0'/>상품이 북마크에서 제거되었습니다.
+      <img src='북마크on.png' className='c0'/>상품이 북마크에 추가되었습니다.
     </div>
   )}
       {isLoading && <div>Loading...</div>}

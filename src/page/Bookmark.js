@@ -45,7 +45,24 @@ const Main = styled.main`
     grid-template-rows: repeat(1, 1fr);
     gap: 20px;
   }
-
+  .bookmark-message{
+    position:fixed;
+    right:1rem;
+    bottom:1rem;
+    z-index:29381038139103812;
+    background-color:white;
+    width:300px;
+    height:50px;
+    border-radius:15px;
+    font-weight:bold;
+    box-shadow: 0px 0px 5px 5px rgba(0, 0, 0, 0.3);
+    display:flex;
+    align-items:center;
+    justify-content:center;
+  }
+  .c0{
+    margin-right:10px;
+  }
 .modal-overlay {
   position: fixed;
   top: 0;
@@ -155,6 +172,7 @@ function Bookmarkpage() {
   const [filteredProducts, setFilteredProducts] = useState([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedImage, setSelectedImage] = useState(null);
+  const [showMessage, setShowMessage] = useState(false);
 
 
   const openModal = (image) => {
@@ -236,9 +254,15 @@ function Bookmarkpage() {
     setIsDropdownOpen(!isDropdownOpen);
   };
 
+  const deleteProduct = (productId) => {
+    setProducts((prevProducts) => {
+      return prevProducts.filter((product) => product.id !== productId);
+    });
+  };
+
   const toggleBookmark = (productId) => {
     setProducts((prevProducts) => {
-      return prevProducts.map((product) => {
+      const updatedProducts = prevProducts.map((product) => {
         if (product.id === productId) {
           return {
             ...product,
@@ -247,8 +271,30 @@ function Bookmarkpage() {
         }
         return product;
       });
+  
+      const hasBookmarkedProduct = updatedProducts.some(
+        (product) => product.isBookmarked
+      );
+  
+      setShowMessage(true);
+  
+      if (!hasBookmarkedProduct) {
+        setTimeout(() => {
+          setShowMessage(false);
+        }, 2000);
+      }
+  
+      setTimeout(() => {
+        setShowMessage(false);
+      }, 2000);
+  
+      return updatedProducts;
     });
+  
+    deleteProduct(productId);
   };
+  
+  
   
   const unbookmarkedProducts = products.filter((product) => !product.isBookmarked);
 
@@ -360,6 +406,11 @@ function Bookmarkpage() {
           </div>
         </div>
       ))}
+      {showMessage && (
+    <div className="bookmark-message">
+      <img src='북마크off.png' className='c0'/>상품이 북마크에서 제거되었습니다.
+    </div>
+  )}
       {isLoading && <div>Loading...</div>}
     </div>
       </Main>

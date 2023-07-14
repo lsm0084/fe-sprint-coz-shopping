@@ -20,6 +20,9 @@ const Header = styled.header`
     margin-right: 1170px;
     font-weight: bolder;
   }
+  .dropdown-button{
+    cursor: pointer;
+  }
 `;
 const Footer = styled.footer`
   border-top: 1px solid rgba(0, 0, 0, 0.2);
@@ -36,13 +39,31 @@ const Footer = styled.footer`
 const Main = styled.main`
   margin: 24px 76px;
   z-index: 1;
+  .type{
+    display:flex;
+    justify-content:center;
+    height:50px;
+    align-items:center;
+  }
   .product-list {
     display: grid;
     grid-template-columns: repeat(4, 1fr);
-    grid-template-rows: repeat(1, 1fr);
+    grid-template-rows: repeat(2, 1fr);
     gap: 20px;
   }
-
+  .type{
+    display:flex;
+    justify-content:center;
+  }
+  .t1, .t2, .t3, .t4, .t5{
+    margin: 5px 20px;
+    display:flex;
+  }
+  .f1, .f2, .f3, .f4, .f5{
+    display:flex;
+    justify-content:center;
+    margin-bottom:12px;
+  }
   .product-card {
   position: relative;
   width: 100%;
@@ -91,7 +112,7 @@ const DropdownMenu = styled.div`
 `;
 
 
-function MainPage() {
+function Productpage() {
   const [products, setProducts] = useState([]);
   const [isBookmarked, setIsBookmarked] = useState(false);
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
@@ -127,7 +148,9 @@ function MainPage() {
   return (
     <div className="main-page">
     <Header>
+    <Link to='/'>
       <img className='hdcs' src='로고.png'/>
+      </Link>
       <span className='hdt'>COZ Shopping</span>
       <div className="dropdown">
   <img src="햄버거버튼.png" className="dropdown-button" onClick={toggleDropdown} />
@@ -147,9 +170,30 @@ function MainPage() {
 </div>
     </Header>
       <Main>
-      <h2>상품 리스트</h2>
+      <div className='type'>
+          <div>
+            <img src='이미지.png' className='t1'/>
+            <div className='f1'>전체</div>
+            </div>
+            <div>
+            <img src='상품.png' className='t2'/>
+            <div className='f2'>상품</div>
+            </div>
+            <div>
+            <img src='카테고리.png' className='t3'/>
+            <div className='f3'>카테고리</div>
+            </div>
+            <div>
+            <img src='기획전.png' className='t4'/>
+            <div className='f4'>기획전</div>
+            </div>
+            <div>
+            <img src='브랜드.png' className='t5'/>
+            <div className='f5'>브랜드</div>
+            </div>
+        </div>
         <div className="product-list">
-          {unbookmarkedProducts.slice(0, 4).map((product) => (
+          {unbookmarkedProducts.slice(0, 8).map((product) => (
             <div key={product.id} className="product-card">
               <img src={product.image_url ? product.image_url : product.brand_image_url} className="productimg" alt={product.title} />
               <div className="product-info">
@@ -169,28 +213,6 @@ function MainPage() {
             </div>
           ))}
         </div>
-        <h2>북마크 리스트</h2>
-        <div className="product-list">
-          {unbookmarkedProducts.slice(4, 8).map((product) => (
-            <div key={product.id} className="product-card">
-              <img src={product.image_url ? product.image_url : product.brand_image_url}  className="productimg" alt={product.title} />
-              <div className="product-info">
-                <div className="info-left">
-                  <span className="title aa">{product.title}</span>
-                  <span className="sub-title aa">{product.sub_title}</span>
-                  <span className="brand-name aa">{product.brand_name}</span>
-                </div>
-                <div className="info-right">
-                  <img
-                    src={'북마크on.png'}
-                    className="bookmark-icon"
-                    onClick={() => toggleBookmark(product.id)}
-                  />
-                </div>
-              </div>
-            </div>
-          ))}
-        </div>
       </Main>
       <Footer>
         <p>개인정보 처리방침 | 이용 약관</p>
@@ -200,4 +222,5 @@ function MainPage() {
   );
 }
 
-export default MainPage;
+export default Productpage;
+

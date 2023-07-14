@@ -45,6 +45,39 @@ const Main = styled.main`
     grid-template-rows: repeat(1, 1fr);
     gap: 20px;
   }
+
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(240, 240, 240, 0.4);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index:19191919;
+}
+
+.modal-image {
+  width: 750px;
+  height: 500px;
+  border-radius: 15px;
+}
+
+.modal-content .exitBtn {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  font-size: 24px;
+  cursor: pointer;
+}
+.modalbookmark{
+ position:fixed;
+ z-index:211312312312;
+ left:29%;
+ bottom:22%;
+}
   .type{
     display:flex;
     justify-content:center;
@@ -120,6 +153,18 @@ function Bookmarkpage() {
   const [isLoading, setIsLoading] = useState(false); 
   const [filterType, setFilterType] = useState(null);
   const [filteredProducts, setFilteredProducts] = useState([]);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [selectedImage, setSelectedImage] = useState(null);
+
+
+  const openModal = (image) => {
+    setSelectedImage(image);
+    setIsModalOpen(true);
+  };
+
+  const closeModal = () => {
+    setIsModalOpen(false);
+  };
 
   const handleFilter = (type) => {
     setFilterType(type);
@@ -280,14 +325,25 @@ function Bookmarkpage() {
     <div className={`f5 ${filterType === 'Brand' ? 'active' : ''}`}>브랜드</div>
   </div>
 </div>
+{isModalOpen && (
+        <div className="modal-overlay" onClick={closeModal}>
+          <div className="modal-content" onClick={(e) => e.stopPropagation()}>
+            <img src={selectedImage} className="modal-image" alt="Modal" />
+            <img src='북마크on.png' className='modalbookmark'/>
+          </div>
+        </div>
+      )}
         <div className="product-list">
         {filteredProducts.map((product) => (
             <div key={product.id} className="product-card">
-          <img
-            src={product.image_url ? product.image_url : product.brand_image_url}
-            className="productimg"
-            alt={product.title}
-          />
+         <img
+              src={product.image_url ? product.image_url : product.brand_image_url}
+              className="productimg"
+              alt={product.title}
+              onClick={() =>
+                openModal(product.image_url ? product.image_url : product.brand_image_url)
+              }
+            />
           <div className="product-info">
             <div className="info-left">
               <span className="title aa">{product.title}</span>

@@ -39,18 +39,62 @@ const Footer = styled.footer`
 const Main = styled.main`
   margin: 24px 76px;
   z-index: 1;
-  .type{
-    display:flex;
-    justify-content:center;
-    height:50px;
-    align-items:center;
-  }
   .product-list {
     display: grid;
     grid-template-columns: repeat(4, 1fr);
-    grid-template-rows: repeat(2, 1fr);
+    grid-template-rows: repeat(1, 1fr);
     gap: 20px;
   }
+  .bookmark-message{
+    position:fixed;
+    right:1rem;
+    bottom:1rem;
+    z-index:29381038139103812;
+    background-color:white;
+    width:300px;
+    height:50px;
+    border-radius:15px;
+    font-weight:bold;
+    box-shadow: 0px 0px 5px 5px rgba(0, 0, 0, 0.3);
+    display:flex;
+    align-items:center;
+    justify-content:center;
+  }
+  .c0{
+    margin-right:10px;
+  }
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(240, 240, 240, 0.4);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index:19191919;
+}
+
+.modal-image {
+  width: 750px;
+  height: 500px;
+  border-radius: 15px;
+}
+
+.modal-content .exitBtn {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  font-size: 24px;
+  cursor: pointer;
+}
+.modalbookmark{
+ position:fixed;
+ z-index:211312312312;
+ left:29%;
+ bottom:22%;
+}
   .type{
     display:flex;
     justify-content:center;
@@ -59,10 +103,17 @@ const Main = styled.main`
     margin: 5px 20px;
     display:flex;
   }
+  .t1, .t2, .t3, .t4, .t5:hover{
+    cursor: pointer;
+  }
   .f1, .f2, .f3, .f4, .f5{
     display:flex;
     justify-content:center;
     margin-bottom:12px;
+  }
+  .active{
+    color:purple;
+    text-decoration:underline;
   }
   .product-card {
   position: relative;
@@ -111,21 +162,107 @@ const DropdownMenu = styled.div`
   }
 `;
 
-
-function Productpage() {
+function Bookmarkpage() {
   const [products, setProducts] = useState([]);
   const [isBookmarked, setIsBookmarked] = useState(false);
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+  const [page, setPage] = useState(1); 
+  const [isLoading, setIsLoading] = useState(false); 
+  const [filterType, setFilterType] = useState(null);
+  const [filteredProducts, setFilteredProducts] = useState([]);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [selectedImage, setSelectedImage] = useState(null);
+  const [showMessage, setShowMessage] = useState(false);
+
+
+  const openModal = (image) => {
+    setSelectedImage(image);
+    setIsModalOpen(true);
+  };
+
+  const closeModal = () => {
+    setIsModalOpen(false);
+  };
+
+  const handleFilter = (type) => {
+    setFilterType(type);
+  };
+
+  useEffect(() => {
+    setFilteredProducts(filterProducts());
+  }, [filterType, products]);
+
+  const filterProducts = () => {
+    if (!filterType) {
+      return products;
+    }
+    return products.filter((product) => product.type === filterType);
+  };
+
+  useEffect(() => {
+  
+    loadProducts();
+  }, []);
+
+  useEffect(() => {
+    
+    window.addEventListener('scroll', handleScroll);
+
+    return () => {
+     
+      window.removeEventListener('scroll', handleScroll);
+    };
+  }, []);
+
+  const handleScroll = () => {
+  
+    const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+    const scrollHeight =
+      document.documentElement.scrollHeight || document.body.scrollHeight;
+    const clientHeight =
+      document.documentElement.clientHeight || window.innerHeight;
+    const scrollBottom = scrollHeight - scrollTop - clientHeight;
+
+    if (scrollBottom < 200 && !isLoading) {
+      loadProducts();
+    }
+  };
+
+  const loadProducts = async () => {
+    try {
+      setIsLoading(true);
+
+  
+      const response = await fetch(
+        `http://cozshopping.codestates-seb.link/api/v1/products?count=8&page=${page}`
+      );
+      const data = await response.json();
+
+
+      setProducts((prevProducts) => [...prevProducts, ...data]);
+
+    
+      setPage((prevPage) => prevPage + 1);
+    } catch (error) {
+      console.error('Failed to load products:', error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   const toggleDropdown = () => {
     setIsDropdownOpen(!isDropdownOpen);
   };
 
+  const deleteProduct = (productId) => {
+    setProducts((prevProducts) => {
+      return prevProducts.filter((product) => product.id !== productId);
+    });
+  };
 
-  
   const toggleBookmark = (productId) => {
     setProducts((prevProducts) => {
-      return prevProducts.map((product) => {
+      const updatedProducts = prevProducts.map((product) => {
         if (product.id === productId) {
           return {
             ...product,
@@ -134,7 +271,27 @@ function Productpage() {
         }
         return product;
       });
+  
+      const hasBookmarkedProduct = updatedProducts.some(
+        (product) => product.isBookmarked
+      );
+  
+      setShowMessage(true);
+  
+      if (!hasBookmarkedProduct) {
+        setTimeout(() => {
+          setShowMessage(false);
+        }, 2000);
+      }
+  
+      setTimeout(() => {
+        setShowMessage(false);
+      }, 2000);
+  
+      return updatedProducts;
     });
+  
+    deleteProduct(productId);
   };
   
   const unbookmarkedProducts = products.filter((product) => !product.isBookmarked);
@@ -148,7 +305,7 @@ function Productpage() {
   return (
     <div className="main-page">
     <Header>
-    <Link to='/'>
+      <Link to='/'>
       <img className='hdcs' src='로고.png'/>
       </Link>
       <span className='hdt'>COZ Shopping</span>
@@ -170,49 +327,90 @@ function Productpage() {
 </div>
     </Header>
       <Main>
-      <div className='type'>
-          <div>
-            <img src='이미지.png' className='t1'/>
-            <div className='f1'>전체</div>
-            </div>
-            <div>
-            <img src='상품.png' className='t2'/>
-            <div className='f2'>상품</div>
-            </div>
-            <div>
-            <img src='카테고리.png' className='t3'/>
-            <div className='f3'>카테고리</div>
-            </div>
-            <div>
-            <img src='기획전.png' className='t4'/>
-            <div className='f4'>기획전</div>
-            </div>
-            <div>
-            <img src='브랜드.png' className='t5'/>
-            <div className='f5'>브랜드</div>
-            </div>
+      <div className="type" style={{ display: 'flex', flexDirection: 'row' }}>
+  <div>
+    <img
+      src="이미지.png"
+      className={`t1 ${filterType === null ? 'active' : ''}`}
+      onClick={() => handleFilter(null)}
+    />
+    <div className={`f1 ${filterType === null ? 'active' : ''}`}>전체</div>
+  </div>
+  <div>
+    <img
+      src="상품.png"
+      className={`t2 ${filterType === 'product' ? 'active' : ''}`}
+      onClick={() => handleFilter('product')}
+    />
+    <div className={`f2 ${filterType === 'product' ? 'active' : ''}`}>상품</div>
+  </div>
+  <div>
+    <img
+      src="카테고리.png"
+      className={`t3 ${filterType === 'Category' ? 'active' : ''}`}
+      onClick={() => handleFilter('Category')}
+    />
+    <div className={`f3 ${filterType === 'Category' ? 'active' : ''}`}>카테고리</div>
+  </div>
+  <div>
+    <img
+      src="기획전.png"
+      className={`t4 ${filterType === 'Exhibition' ? 'active' : ''}`}
+      onClick={() => handleFilter('Exhibition')}
+    />
+    <div className={`f4 ${filterType === 'Exhibition' ? 'active' : ''}`}>기획전</div>
+  </div>
+  <div>
+    <img
+      src="브랜드.png"
+      className={`t5 ${filterType === 'Brand' ? 'active' : ''}`}
+      onClick={() => handleFilter('Brand')}
+    />
+    <div className={`f5 ${filterType === 'Brand' ? 'active' : ''}`}>브랜드</div>
+  </div>
+</div>
+{isModalOpen && (
+        <div className="modal-overlay" onClick={closeModal}>
+          <div className="modal-content" onClick={(e) => e.stopPropagation()}>
+            <img src={selectedImage} className="modal-image" alt="Modal" />
+            <img src='북마크on.png' className='modalbookmark'/>
+          </div>
         </div>
+      )}
         <div className="product-list">
-          {unbookmarkedProducts.slice(0, 8).map((product) => (
+        {filteredProducts.map((product) => (
             <div key={product.id} className="product-card">
-              <img src={product.image_url ? product.image_url : product.brand_image_url} className="productimg" alt={product.title} />
-              <div className="product-info">
-                <div className="info-left">
-                  <span className="title aa">{product.title}</span>
-                  <span className="sub-title aa">{product.sub_title}</span>
-                  <span className="brand-name aa">{product.brand_name}</span>
-                </div>
-                <div className="info-right">
-                  <img
-                    src={product.isBookmarked ? '북마크on.png' : '북마크off.png'}
-                    className="bookmark-icon"
-                    onClick={() => toggleBookmark(product.id)}
-                  />
-                </div>
-              </div>
+         <img
+              src={product.image_url ? product.image_url : product.brand_image_url}
+              className="productimg"
+              alt={product.title}
+              onClick={() =>
+                openModal(product.image_url ? product.image_url : product.brand_image_url)
+              }
+            />
+          <div className="product-info">
+            <div className="info-left">
+              <span className="title aa">{product.title}</span>
+              <span className="sub-title aa">{product.sub_title}</span>
+              <span className="brand-name aa">{product.brand_name}</span>
             </div>
-          ))}
+            <div className="info-right">
+              <img
+                src={'북마크on.png'}
+                className="bookmark-icon"
+                onClick={() => toggleBookmark(product.id)}
+              />
+            </div>
+          </div>
         </div>
+      ))}
+      {showMessage && (
+    <div className="bookmark-message">
+      <img src='북마크off.png' className='c0'/>상품이 북마크에서 제거되었습니다.
+    </div>
+  )}
+      {isLoading && <div>Loading...</div>}
+    </div>
       </Main>
       <Footer>
         <p>개인정보 처리방침 | 이용 약관</p>
@@ -222,5 +420,5 @@ function Productpage() {
   );
 }
 
-export default Productpage;
+export default Bookmarkpage;
 

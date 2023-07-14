@@ -47,7 +47,56 @@ const Main = styled.main`
     grid-template-rows: repeat(1, 1fr);
     gap: 20px;
   }
+  .bookmark-message{
+    position:fixed;
+    right:1rem;
+    bottom:1rem;
+    z-index:29381038139103812;
+    background-color:white;
+    width:300px;
+    height:50px;
+    border-radius:15px;
+    font-weight:bold;
+    box-shadow: 0px 0px 5px 5px rgba(0, 0, 0, 0.3);
+    display:flex;
+    align-items:center;
+    justify-content:center;
+  }
+  .c0{
+    margin-right:10px;
+  }
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(240, 240, 240, 0.4);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index:19191919;
+}
 
+.modal-image {
+  width: 750px;
+  height: 500px;
+  border-radius: 15px;
+}
+
+.modal-content .exitBtn {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  font-size: 24px;
+  cursor: pointer;
+}
+.modalbookmark{
+ position:fixed;
+ z-index:211312312312;
+ left:29%;
+ bottom:22%;
+}
   .product-card {
   position: relative;
   width: 100%;
@@ -102,6 +151,19 @@ function MainPage() {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [showModal, setShowModal] = useState(false);
   const [modalImageUrl, setModalImageUrl] = useState('');
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [selectedImage, setSelectedImage] = useState(null);
+  const [showMessage, setShowMessage] = useState(false);
+
+
+  const openModal = (image) => {
+    setSelectedImage(image);
+    setIsModalOpen(true);
+  };
+
+  const closeModal = () => {
+    setIsModalOpen(false);
+  };
 
   const toggleDropdown = () => {
     setIsDropdownOpen(!isDropdownOpen);
@@ -116,9 +178,15 @@ function MainPage() {
     setShowModal(false);
   };
   
+  const deleteProduct = (productId) => {
+    setProducts((prevProducts) => {
+      return prevProducts.filter((product) => product.id !== productId);
+    });
+  };
+
   const toggleBookmark = (productId) => {
     setProducts((prevProducts) => {
-      return prevProducts.map((product) => {
+      const updatedProducts = prevProducts.map((product) => {
         if (product.id === productId) {
           return {
             ...product,
@@ -127,8 +195,29 @@ function MainPage() {
         }
         return product;
       });
+  
+      const hasBookmarkedProduct = updatedProducts.some(
+        (product) => product.isBookmarked
+      );
+  
+      setShowMessage(true);
+  
+      if (!hasBookmarkedProduct) {
+        setTimeout(() => {
+          setShowMessage(false);
+        }, 2000);
+      }
+  
+      setTimeout(() => {
+        setShowMessage(false);
+      }, 2000);
+  
+      return updatedProducts;
     });
+  
+    deleteProduct(productId);
   };
+  
   
   const unbookmarkedProducts = products.filter((product) => !product.isBookmarked);
 
@@ -167,7 +256,10 @@ function MainPage() {
         <div className="product-list">
           {unbookmarkedProducts.slice(0, 4).map((product) => (
             <div key={product.id} className="product-card">
-              <img src={product.image_url ? product.image_url : product.brand_image_url} className="productimg" alt={product.title} />
+              <img src={product.image_url ? product.image_url : product.brand_image_url} className="productimg" alt={product.title} 
+               onClick={() =>
+                openModal(product.image_url ? product.image_url : product.brand_image_url)
+              }/>
               <div className="product-info">
                 <div className="info-left">
                   <span className="title aa">{product.title}</span>
@@ -176,7 +268,7 @@ function MainPage() {
                 </div>
                 <div className="info-right">
                   <img
-                    src={product.isBookmarked ? '북마크on.png' : '북마크off.png'}
+                    src={'북마크off.png'}
                     className="bookmark-icon"
                     onClick={() => toggleBookmark(product.id)}
                   />
@@ -185,11 +277,26 @@ function MainPage() {
             </div>
           ))}
         </div>
+        {isModalOpen && (
+        <div className="modal-overlay" onClick={closeModal}>
+          <div className="modal-content" onClick={(e) => e.stopPropagation()}>
+            <img src={selectedImage} className="modal-image" alt="Modal" />
+            <img src='북마크on.png' className='modalbookmark'/>
+          </div>
+        </div>
+      )}
         <h2>북마크 리스트</h2>
         <div className="product-list">
           {unbookmarkedProducts.slice(4, 8).map((product) => (
             <div key={product.id} className="product-card">
-              <img src={product.image_url ? product.image_url : product.brand_image_url}  className="productimg" alt={product.title} />
+ <img
+              src={product.image_url ? product.image_url : product.brand_image_url}
+              className="productimg"
+              alt={product.title}
+              onClick={() =>
+                openModal(product.image_url ? product.image_url : product.brand_image_url)
+              }
+            />
               <div className="product-info">
                 <div className="info-left">
                   <span className="title aa">{product.title}</span>
@@ -206,6 +313,11 @@ function MainPage() {
               </div>
             </div>
           ))}
+          {showMessage && (
+    <div className="bookmark-message">
+      <img src='북마크off.png' className='c0'/>상품이 북마크에서 제거되었습니다.
+    </div>
+  )}
         </div>
       </Main>
       <Footer>

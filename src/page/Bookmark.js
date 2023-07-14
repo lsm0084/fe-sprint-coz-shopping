@@ -294,8 +294,6 @@ function Bookmarkpage() {
     deleteProduct(productId);
   };
   
-  
-  
   const unbookmarkedProducts = products.filter((product) => !product.isBookmarked);
 
   useEffect(() => {

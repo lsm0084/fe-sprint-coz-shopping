@@ -373,7 +373,7 @@ function Bookmarkpage() {
         <div className="modal-overlay" onClick={closeModal}>
           <div className="modal-content" onClick={(e) => e.stopPropagation()}>
             <img src={selectedImage} className="modal-image" alt="Modal" />
-            <img src='북마크on.png' className='modalbookmark'/>
+            <img src='북마크off.png' className='modalbookmark'/>
           </div>
         </div>
       )}
@@ -396,7 +396,7 @@ function Bookmarkpage() {
             </div>
             <div className="info-right">
               <img
-                src={'북마크on.png'}
+                src={'북마크off.png'}
                 className="bookmark-icon"
                 onClick={() => toggleBookmark(product.id)}
               />
@@ -406,7 +406,7 @@ function Bookmarkpage() {
       ))}
       {showMessage && (
     <div className="bookmark-message">
-      <img src='북마크off.png' className='c0'/>상품이 북마크에서 제거되었습니다.
+      <img src='북마크on.png' className='c0'/>상품이 북마크에 추가되었습니다.
     </div>
   )}
       {isLoading && <div>Loading...</div>}
@@ -421,4 +421,3 @@ function Bookmarkpage() {
 }
 
 export default Bookmarkpage;
-

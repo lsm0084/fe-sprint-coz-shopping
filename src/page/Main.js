@@ -1,8 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
 import { Link } from 'react-router-dom';
-import Modal from './modal';
-
 
 const Header = styled.header`
   width: 100%;
@@ -324,9 +322,6 @@ function MainPage() {
         <p>개인정보 처리방침 | 이용 약관</p>
         <p>All rights reserved @ Codestates</p>
       </Footer>
-      {showModal && (
-        <Modal imageUrl={modalImageUrl} onClose={handleCloseModal} />
-      )}
     </div>
   );
 }
